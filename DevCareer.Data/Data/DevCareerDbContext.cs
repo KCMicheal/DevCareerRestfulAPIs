@@ -1,4 +1,5 @@
 ﻿using DevCareer.Data.Models;
+using Ecommerce.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DevCareer.Data.Data;
@@ -12,5 +13,4 @@ public class DevCareerDbContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Tag> Tags { get; set; }
-
 }
