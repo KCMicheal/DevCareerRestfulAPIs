@@ -1,9 +1,10 @@
 ﻿using DevCareer.Data.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DevCareer.Data.Data;
 
-public class DevCareerDbContext : DbContext
+public class DevCareerDbContext : IdentityDbContext<ApplicationUser>
 {
     public DevCareerDbContext(DbContextOptions options) : base(options)
     {
