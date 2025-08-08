@@ -11,5 +11,6 @@ namespace DevCareer.Data.Models
         public string FirstName { get; set; }
         public string Email { get; set; }
         public string Pin { get; set; }
+        public string Role { get; set; } = AppRoles.user;
     }
 }

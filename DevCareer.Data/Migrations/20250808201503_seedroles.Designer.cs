@@ -4,6 +4,7 @@ using DevCareer.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevCareer.Data.Migrations
 {
     [DbContext(typeof(DevCareerDbContext))]
-    partial class DevCareerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250808201503_seedroles")]
+    partial class seedroles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,19 +188,19 @@ namespace DevCareer.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1",
+                            Id = "436619a0-5501-40db-93d1-52c06028598d",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "2",
+                            Id = "c7e3ee88-67a7-46ad-9ff4-3c0e0825c528",
                             Name = "Support",
                             NormalizedName = "SUPPORT"
                         },
                         new
                         {
-                            Id = "3",
+                            Id = "bb17d865-d778-4787-9c20-255ef10e60a2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
