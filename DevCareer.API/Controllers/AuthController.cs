@@ -37,6 +37,9 @@ namespace DevCareer.API.Controllers
             };
 
             var result = await _userManager.CreateAsync(user, model.Pin);
+            var role = string.IsNullOrEmpty(model.Role) ? AppRoles.user : model.Role;
+            await _userManager.AddToRoleAsync(user, role);    
+
             if (result.Succeeded)
             {
                 return Ok("Registration successful");
@@ -53,11 +56,15 @@ namespace DevCareer.API.Controllers
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user is not null && await _userManager.CheckPasswordAsync(user, model.Pin))
             {
-                var claims = new[]
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+                var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id)
+                    new(ClaimTypes.Email, user.Email),
+                    new (ClaimTypes.NameIdentifier, user.Id)
                 };
+
+                claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role,role)));
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

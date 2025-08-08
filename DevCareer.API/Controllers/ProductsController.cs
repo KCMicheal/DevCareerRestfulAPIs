@@ -18,6 +18,7 @@ namespace DevCareer.API.Controllers
             _context = devCareerDbContext;
         }
 
+        [Authorize(Roles = AppRoles.user)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
@@ -66,7 +67,23 @@ namespace DevCareer.API.Controllers
 
                 throw new InvalidOperationException(ex.Message);
             }
+        }
 
+        [Authorize(Roles = AppRoles.user)]
+        [HttpPut]
+        public async Task<IActionResult> UpdateProduct(int id, ProductDto update)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var existingProduct = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (existingProduct == null) return NotFound();
+
+            existingProduct.Name = update.Name;
+            existingProduct.Price = update.Price;
+            existingProduct.Description = update.Description;
+
+            await _context.SaveChangesAsync();
+            return Ok(existingProduct);
         }
     }
 }
