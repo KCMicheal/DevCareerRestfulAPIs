@@ -14,11 +14,13 @@ namespace DevCareer.API.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _config;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration config)
+        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration config, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _config = config;
+            _roleManager = roleManager;
         }
 
         [HttpPost("register")]
@@ -75,6 +77,20 @@ namespace DevCareer.API.Controllers
             }
 
             return Unauthorized("Invalid email or pin.");
+        }
+
+        [HttpPost("assign-role")]
+        public async Task<IActionResult> AssignRole(string email, string role)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is null) return NotFound("User Not Found!");
+
+            if (!await _roleManager.RoleExistsAsync(role)) return BadRequest("Role does not exist");
+
+            var result = await _userManager.AddToRoleAsync(user, role);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            return Ok("Role assigned successfully");
         }
     }
 }

@@ -1,3 +1,4 @@
+using DevCareer.API.Infrastructure.StartupExtentions;
 using DevCareer.Data.Data;
 using DevCareer.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +17,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DevCareerDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.Configure<Jwt>(builder.Configuration.GetSection("Jwt"));
+builder.Services.RegisterAndConfigureSwaggerAuthorizationOptions();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<DevCareerDbContext>();
 builder.Services.AddAuthentication(options =>
@@ -43,6 +47,20 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roles = new[] { "User", "Support", "Admin" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
 }
 
 app.UseHttpsRedirection();

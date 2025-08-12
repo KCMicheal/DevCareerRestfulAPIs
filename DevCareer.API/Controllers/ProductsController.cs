@@ -19,11 +19,15 @@ namespace DevCareer.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
         {
-            var products = await _context.Products.Include(p => p.Category)
-                                                  .Include(p => p.Tags)
-                                                  .ToListAsync();
+            var products = await _context.Products.Select(p => new ProductDto
+            {
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price
+            }).ToListAsync();
+
             return Ok(products);
         }
 
@@ -67,6 +71,27 @@ namespace DevCareer.API.Controllers
                 throw new InvalidOperationException(ex.Message);
             }
 
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, ProductDto model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound($"Product with ID {id} not found");
+            }
+
+            product.Name = model.Name;
+            product.Description = model.Description;
+            product.Price = model.Price;
+
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+
+            return Ok(product);
         }
     }
 }
