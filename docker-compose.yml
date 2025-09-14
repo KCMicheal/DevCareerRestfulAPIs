@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  devcareerapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ./DevCareer.API/appsettings.Development.json:/app/appsettings.Development.json
+      - ./DevCareer.API/appsettings.json:/app/appsettings.json
